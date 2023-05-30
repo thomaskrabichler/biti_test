@@ -27,7 +27,7 @@ class _HomeView extends StatelessWidget {
 
     switch (selectedTab) {
       case 0:
-        page = const PlacerHolderPage();
+        page = const ProfilePage();
         break;
       case 1:
         page = const PlacerHolderPage();
