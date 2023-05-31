@@ -28,7 +28,6 @@ class ProfileCubit extends Cubit<ProfileState> {
       );
 
   void firstNameChanged(String name) {
-      print('bae');
     emit(
       state.copyWith(
         formStatus: () => FormStatus.editing,
@@ -83,7 +82,6 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void saveUserDetails() {
     //...writing to db
-      print(state.userDetails);
     emit(state.copyWith(formStatus: () => FormStatus.save));
   }
 

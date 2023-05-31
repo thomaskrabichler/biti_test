@@ -1,7 +1,5 @@
-import 'dart:io';
-
+import 'package:biti_test/features/calendar/calendar.dart';
 import 'package:biti_test/features/profile/profile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -57,32 +55,6 @@ class ProfileView extends StatelessWidget {
                 previous.assignments != current.assignments ||
                 previous.formStatus != current.formStatus,
             builder: (context, state) {
-              print(state.userDetails);
-              //     final TextEditingController firstNameController =
-              //         TextEditingController(text: state.userDetails.firstName);
-              //     final TextEditingController lastNameController =
-              //         TextEditingController(text: state.userDetails.lastName);
-              //     final TextEditingController personNumberController =
-              //         TextEditingController(text: state.userDetails.personNumber);
-              //     final TextEditingController phoneController =
-              //         TextEditingController(text: state.userDetails.phoneNumber);
-              //     final TextEditingController descriptionController =
-              //         TextEditingController(text: state.userDetails.description);
-              //     final TextEditingController statusController =
-              //        TextEditingController(text: state.userDetails.status);
-
-              final TextEditingController firstNameController =
-                  TextEditingController();
-              final TextEditingController lastNameController =
-                  TextEditingController();
-              final TextEditingController personNumberController =
-                  TextEditingController();
-              final TextEditingController phoneController =
-                  TextEditingController();
-              final TextEditingController descriptionController =
-                  TextEditingController();
-              final TextEditingController statusController =
-                  TextEditingController();
               return ListView(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 children: [
@@ -90,107 +62,13 @@ class ProfileView extends StatelessWidget {
                     padding: EdgeInsets.symmetric(vertical: verticalSpacing),
                     child: const NavigationIndicator(),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const ProfileHeadline(title: 'Avatar'),
-                      Row(
-                        children: [
-                          AvatarColorSelector(
-                            color: Colors.blueGrey,
-                            state: state,
-                          ),
-                          AvatarColorSelector(
-                            color: Colors.redAccent,
-                            state: state,
-                          ),
-                          AvatarColorSelector(
-                            color: Colors.greenAccent,
-                            state: state,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                  _AvatarSelector(state: state),
                   SizedBox(height: verticalSpacing),
                   const ProfileHeadline(title: 'Uppgifter'),
-                  Row(
-                    children: [
-                      UserDetailsTextField(
-                        initText: state.userDetails.firstName,
-                        controller: firstNameController,
-                        title: 'Förnamn',
-                        onChanged: (val) =>
-                            context.read<ProfileCubit>().firstNameChanged(val),
-                      ),
-                      const SizedBox(width: 22),
-                      UserDetailsTextField(
-                        initText: state.userDetails.lastName,
-                        controller: lastNameController,
-                        title: 'Efternamn',
-                        onChanged: (val) =>
-                            context.read<ProfileCubit>().lastNameChanged(val),
-                        //   ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      UserDetailsTextField(
-                        initText: state.userDetails.personNumber,
-                        controller: personNumberController,
-                        title: 'Personnummer',
-                        onChanged: (val) => context
-                            .read<ProfileCubit>()
-                            .personNumberChanged(val),
-                      ),
-                      const SizedBox(width: 22),
-                      UserDetailsTextField(
-                        initText: state.userDetails.phoneNumber,
-                        controller: phoneController,
-                        title: 'Telefonnummer',
-                        onChanged: (val) =>
-                            context.read<ProfileCubit>().phoneChanged(val),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      UserDetailsTextField(
-                        initText: state.userDetails.description,
-                        controller: descriptionController,
-                        title: 'Beskriving',
-                        onChanged: (val) => context
-                            .read<ProfileCubit>()
-                            .descriptionChanged(val),
-                      ),
-                      const SizedBox(width: 22),
-                      UserDetailsTextField(
-                        initText: state.userDetails.status,
-                        controller: statusController,
-                        title: 'Status',
-                        onChanged: (val) =>
-                            context.read<ProfileCubit>().statusChanged(val),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _ClearButton(controllers: [
-                          firstNameController,
-                          lastNameController,
-                          phoneController,
-                          descriptionController,
-                          statusController,
-                          personNumberController,
-                        ]),
-                        _SaveButton(),
-                      ],
-                    ),
-                  ),
+                  const UserDetailsForm(),
+                  SizedBox(height: verticalSpacing),
+                  const ProfileHeadline(title: 'Kalender'),
+                  CalendarWidget()
                 ],
               );
             },
@@ -201,139 +79,98 @@ class ProfileView extends StatelessWidget {
   }
 }
 
-class _ClearButton extends StatelessWidget {
-  final List<TextEditingController> controllers;
-
-  const _ClearButton({required this.controllers});
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: MaterialStateMouseCursor.clickable,
-      child: GestureDetector(
-        onTap: () {
-          controllers.forEach((c) => c.clear());
-
-          context.read<ProfileCubit>().clearAllUserDetails();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: const BorderRadius.all(Radius.circular(6)),
-          ),
-          child: const Text(
-            'Ta bort',
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SaveButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-          context.read<ProfileCubit>().saveUserDetails();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          decoration: const BoxDecoration(
-            color: Color(0XFF436b8a),
-            borderRadius: BorderRadius.all(Radius.circular(6)),
-          ),
-          child: const Text(
-            'Spara',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class UserDetailsTextField extends StatefulWidget {
-  const UserDetailsTextField({
+class DayColumn extends StatelessWidget {
+  const DayColumn({
     Key? key,
-    required this.title,
-    required this.controller,
-    required this.onChanged,
-    required this.initText,
   }) : super(key: key);
 
-  final String title;
-  final String initText;
-  final TextEditingController controller;
-  final ValueSetter<String> onChanged;
-
-  @override
-  _UserDetailsTextFieldState createState() => _UserDetailsTextFieldState();
-}
-
-class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(_onTextChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_onTextChanged);
-    super.dispose();
-  }
-
-  void _onTextChanged() {
-    print('yui');
-    widget.onChanged(widget.controller.text);
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
+    double position = 0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Mondaag'),
+        SizedBox(
+          width: 150,
+          child: Stack(
+            children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: 24,
+                itemBuilder: (context, index) {
+                  final itemHeight = 30.0;
+                  final containerHeight = 20.0;
+
+                  return MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Calculate the position of the stacked container
+                        position = (index + 1) * itemHeight;
+
+                        // user input of start and endtime
+
+                        final startTime = 2;
+                        final endTime = 4;
+                        final timeFrameHeight = itemHeight * (endTime-startTime);
+                        
+                        print('Position: $position, Height: $timeFrameHeight');
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 8.0,
+                          bottom: 2.0,
+                        ),
+                        child: Container(
+                          height: itemHeight,
+                          color: Colors.grey[200],
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            ),
-            const SizedBox(height: 6),
-            TextField(
-              key: Key('userForm_${widget.title}_textField'),
-              controller: widget.controller..text = widget.initText,
-              onChanged: (val) {
-                widget.onChanged(val);
-              },
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding: const EdgeInsets.only(left: 8),
-                border: InputBorder.none,
+              Positioned(
+                top: position, // Set the initial position of the container
+                left: 0,
+                right: 0,
+                height: 20,
+                child: Container(
+                  color: Colors.red,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
 
-class AvatarColorSelector extends StatelessWidget {
-  const AvatarColorSelector({
-    super.key,
+class _AvatarSelector extends StatelessWidget {
+  const _AvatarSelector({required this.state});
+  final ProfileState state;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const ProfileHeadline(title: 'Avatar'),
+        Row(
+          children: [
+            _ColorPicker(color: Colors.blueGrey, state: state),
+            _ColorPicker(color: Colors.redAccent, state: state),
+            _ColorPicker(color: Colors.greenAccent, state: state),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ColorPicker extends StatelessWidget {
+  const _ColorPicker({
     required this.color,
     required this.state,
   });
@@ -361,25 +198,6 @@ class AvatarColorSelector extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ProfileHeadline extends StatelessWidget {
-  const ProfileHeadline({
-    super.key,
-    required this.title,
-  });
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
       ),
     );
   }
