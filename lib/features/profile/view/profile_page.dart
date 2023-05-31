@@ -9,7 +9,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProfileBloc(),
+      create: (_) => ProfileCubit()..initProfile(),
       child: const ProfileView(),
     );
   }
@@ -28,37 +28,257 @@ class ProfileView extends StatelessWidget {
           const paddingPercentage = 0.17;
           final horizontalPadding = screenWidth * paddingPercentage;
           final verticalSpacing = screenHeight * 0.06;
-          return BlocBuilder<ProfileBloc, ProfileState>(
-              builder: (context, state) {
-
-            return ListView(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: verticalSpacing),
-                  child: const NavigationIndicator(),
-                ),
-                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ProfileHeadline(title: 'Avatar'),
-                    Row(
+          return BlocConsumer<ProfileCubit, ProfileState>(
+            ///listenWhen: (previous, current) => previous.formStatus != current.formStatus,
+            listener: (context, state) {
+              print(state.formStatus);
+              if (state.formStatus == FormStatus.clear) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('User details cleared!'),
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              final TextEditingController firstNameController =
+                  TextEditingController(text: state.userDetails.firstName);
+              final TextEditingController lastNameController =
+                  TextEditingController(text: state.userDetails.lastName);
+              final TextEditingController personNumberController =
+                  TextEditingController(text: state.userDetails.personNumber);
+              final TextEditingController phoneController =
+                  TextEditingController(text: state.userDetails.phoneNumber);
+              final TextEditingController descriptionController =
+                  TextEditingController(text: state.userDetails.description);
+              final TextEditingController statusController =
+                  TextEditingController(text: state.userDetails.status);
+              return ListView(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: verticalSpacing),
+                    child: const NavigationIndicator(),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const ProfileHeadline(title: 'Avatar'),
+                      Row(
+                        children: [
+                          AvatarColorSelector(
+                            color: Colors.blueGrey,
+                            state: state,
+                          ),
+                          AvatarColorSelector(
+                            color: Colors.redAccent,
+                            state: state,
+                          ),
+                          AvatarColorSelector(
+                            color: Colors.greenAccent,
+                            state: state,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: verticalSpacing),
+                  const ProfileHeadline(title: 'Uppgifter'),
+                  Row(
+                    children: [
+                      UserDetailsTextField(
+                        controller: firstNameController,
+                        title: 'Förnamn',
+                        onChanged: (val) =>
+                            context.read<ProfileCubit>().firstNameChanged(val),
+                      ),
+                      const SizedBox(width: 22),
+                      UserDetailsTextField(
+                        controller: lastNameController,
+                        title: 'Efternamn',
+                        onChanged: (val) =>
+                            context.read<ProfileCubit>().lastNameChanged(val),
+                        //   ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      UserDetailsTextField(
+                        controller: personNumberController,
+                        title: 'Personnummer',
+                        onChanged: (val) => context
+                            .read<ProfileCubit>()
+                            .personNumberChanged(val),
+                      ),
+                      const SizedBox(width: 22),
+                      UserDetailsTextField(
+                        controller: phoneController,
+                        title: 'Telefonnummer',
+                        onChanged: (val) =>
+                            context.read<ProfileCubit>().phoneChanged(val),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      UserDetailsTextField(
+                        controller: descriptionController,
+                        title: 'Beskriving',
+                        onChanged: (val) => context
+                            .read<ProfileCubit>()
+                            .descriptionChanged(val),
+                      ),
+                      const SizedBox(width: 22),
+                      UserDetailsTextField(
+                        controller: statusController,
+                        title: 'Status',
+                        onChanged: (val) =>
+                            context.read<ProfileCubit>().statusChanged(val),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        AvatarColorSelector(color: Colors.blueGrey, ),
-                        AvatarColorSelector(color: Colors.redAccent,),
-                        AvatarColorSelector(color: Colors.greenAccent,),
+                        _ClearButton(controllers: [
+                          firstNameController,
+                          lastNameController,
+                          phoneController,
+                          descriptionController,
+                          statusController,
+                          personNumberController,
+                        ]),
+                        const _SaveButton(),
                       ],
                     ),
-                  ],
-                ),
-
-                SizedBox(height: verticalSpacing),
-                // SizedBox(height: heightSpacing)
-              ],
-            );
-                            },
+                  ),
+                ],
+              );
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class _ClearButton extends StatelessWidget {
+  final List<TextEditingController> controllers;
+
+  const _ClearButton({required this.controllers});
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: MaterialStateMouseCursor.clickable,
+      child: GestureDetector(
+        onTap: () {
+          controllers.forEach((c) => c.clear());
+
+          context.read<ProfileCubit>().clearAllUserDetails();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: const BorderRadius.all(Radius.circular(6)),
+          ),
+          child: const Text(
+            'Ta bort',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SaveButton extends StatelessWidget {
+  const _SaveButton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      decoration: const BoxDecoration(
+        color: Color(0XFF436b8a),
+        borderRadius: BorderRadius.all(Radius.circular(6)),
+      ),
+      child: const Text(
+        'Spara',
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class UserDetailsTextField extends StatefulWidget {
+  const UserDetailsTextField({
+    Key? key,
+    required this.title,
+    required this.controller,
+    required this.onChanged,
+  }) : super(key: key);
+
+  final String title;
+  final TextEditingController controller;
+  final ValueSetter<String> onChanged;
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _UserDetailsTextFieldState createState() => _UserDetailsTextFieldState();
+}
+
+class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    widget.onChanged(widget.controller.text);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.title,
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 6),
+            TextFormField(
+              controller: widget.controller,
+              onChanged: (val) => widget.onChanged,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding: const EdgeInsets.only(left: 8),
+                border: InputBorder.none,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -68,31 +288,30 @@ class AvatarColorSelector extends StatelessWidget {
   const AvatarColorSelector({
     super.key,
     required this.color,
+    required this.state,
   });
 
   final Color color;
+  final ProfileState state;
   @override
   Widget build(BuildContext context) {
-    final ProfileBloc profileBloc = context.read<ProfileBloc>();
+    final ProfileCubit profileCubit = context.read<ProfileCubit>();
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () {
-          profileBloc.add(ProfileAvatarColorChanged(color));
-  
-        },
+        onTap: () => profileCubit.avatarColorChanged(color),
         child: Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: Container(
             height: 30,
             width: 30,
             decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-                border: profileBloc.state.avatarColor == color
-                    ? Border.all(color: Colors.blueAccent, width: 3)
-                    : null //TODO: replace color with state.selectedColor
-                ),
+              color: color,
+              shape: BoxShape.circle,
+              border: profileCubit.state.avatarColor == color
+                  ? Border.all(color: Colors.blueAccent, width: 3)
+                  : null,
+            ),
           ),
         ),
       ),
@@ -110,7 +329,7 @@ class ProfileHeadline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.only(bottom: 16),
       child: Text(
         title,
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
