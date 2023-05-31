@@ -56,19 +56,31 @@ class ProfileView extends StatelessWidget {
                 previous.formStatus != current.formStatus,
             builder: (context, state) {
               return ListView(
-                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                  
                 children: [
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: verticalSpacing),
-                    child: const NavigationIndicator(),
+                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: verticalSpacing),
+                          child: const NavigationIndicator(),
+                        ),
+                        _AvatarSelector(state: state),
+                        SizedBox(height: verticalSpacing),
+                        const ProfileHeadline(title: 'Uppgifter'),
+                        const UserDetailsForm(),
+                        SizedBox(height: verticalSpacing),
+                        const ProfileHeadline(title: 'Kalender'),
+                      ],
+                    ),
                   ),
-                  _AvatarSelector(state: state),
-                  SizedBox(height: verticalSpacing),
-                  const ProfileHeadline(title: 'Uppgifter'),
-                  const UserDetailsForm(),
-                  SizedBox(height: verticalSpacing),
-                  const ProfileHeadline(title: 'Kalender'),
-                  CalendarWidget()
+                  Padding(
+                    padding:  EdgeInsets.only(left:horizontalPadding-65, right: horizontalPadding),
+                    child: const CalendarWidget(),
+                  )
                 ],
               );
             },
@@ -79,74 +91,6 @@ class ProfileView extends StatelessWidget {
   }
 }
 
-class DayColumn extends StatelessWidget {
-  const DayColumn({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    double position = 0;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Mondaag'),
-        SizedBox(
-          width: 150,
-          child: Stack(
-            children: [
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: 24,
-                itemBuilder: (context, index) {
-                  final itemHeight = 30.0;
-                  final containerHeight = 20.0;
-
-                  return MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () {
-                        // Calculate the position of the stacked container
-                        position = (index + 1) * itemHeight;
-
-                        // user input of start and endtime
-
-                        final startTime = 2;
-                        final endTime = 4;
-                        final timeFrameHeight = itemHeight * (endTime-startTime);
-                        
-                        print('Position: $position, Height: $timeFrameHeight');
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          right: 8.0,
-                          bottom: 2.0,
-                        ),
-                        child: Container(
-                          height: itemHeight,
-                          color: Colors.grey[200],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-              Positioned(
-                top: position, // Set the initial position of the container
-                left: 0,
-                right: 0,
-                height: 20,
-                child: Container(
-                  color: Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class _AvatarSelector extends StatelessWidget {
   const _AvatarSelector({required this.state});

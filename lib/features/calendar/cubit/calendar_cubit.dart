@@ -16,28 +16,32 @@ class CalendarCubit extends Cubit<CalendarState> {
     ];
     final mockTimeframesSunday = [
       const Timeframe(startTime: '7', endTime: '8'),
-      const Timeframe(startTime: '14', endTime: '16.5'),
-      const Timeframe(startTime: '18', endTime: '22.5'),
-      const Timeframe(startTime: '5', endTime: '6'),
+      const Timeframe(startTime: '14', endTime: '17'),
+      const Timeframe(startTime: '18', endTime: '23'),
+      const Timeframe(startTime: '5', endTime: '5.5'),
     ];
-   DayColumn monday = DayColumn(day: 'Monday', timeframes: mockTimeframes);
-   DayColumn tuesday = DayColumn(day: 'Tuesday', timeframes: mockTimeframes);
-   DayColumn wednesday =
-       DayColumn(day: 'Wednesday', timeframes: mockTimeframes);
-   DayColumn thursday = DayColumn(day: 'Thursday', timeframes: mockTimeframes);
-   DayColumn friday = DayColumn(day: 'Friday', timeframes: mockTimeframes);
-   DayColumn saturday = DayColumn(day: 'Saturday', timeframes: mockTimeframes);
+    DayColumn monday = DayColumn(day: 'Monday', timeframes: mockTimeframes);
+    DayColumn tuesday = DayColumn(day: 'Tuesday', timeframes: mockTimeframes);
+    DayColumn wednesday =
+        DayColumn(day: 'Wednesday', timeframes: mockTimeframes);
+    DayColumn thursday = DayColumn(day: 'Thursday', timeframes: mockTimeframes);
+    DayColumn friday = DayColumn(day: 'Friday', timeframes: mockTimeframes);
+    DayColumn saturday = DayColumn(day: 'Saturday', timeframes: mockTimeframes);
     DayColumn sunday =
         DayColumn(day: 'Sunday', timeframes: mockTimeframesSunday);
 
-    emit(state.copyWith(columns: [
-      monday,
-      tuesday,
-      wednesday,
-      thursday,
-      friday,
-      saturday,
-      sunday
-    ]));
+    emit(
+      state.copyWith(
+        columns: [
+          monday,
+          tuesday,
+          wednesday,
+          thursday,
+          friday,
+          saturday,
+          sunday,
+        ],
+      ),
+    );
   }
 }
