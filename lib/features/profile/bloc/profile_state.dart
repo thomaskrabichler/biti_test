@@ -9,6 +9,7 @@ enum ProfileStatus {
 
 enum FormStatus {
   initial,
+  editing,
   save,
   clear,
 }

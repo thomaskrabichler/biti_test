@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +17,8 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
+final UniqueKey key = UniqueKey();
+
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
@@ -29,18 +33,31 @@ class ProfileView extends StatelessWidget {
           final horizontalPadding = screenWidth * paddingPercentage;
           final verticalSpacing = screenHeight * 0.06;
           return BlocConsumer<ProfileCubit, ProfileState>(
-            ///listenWhen: (previous, current) => previous.formStatus != current.formStatus,
+            listenWhen: (previous, current) =>
+                previous.formStatus != current.formStatus,
             listener: (context, state) {
-              print(state.formStatus);
               if (state.formStatus == FormStatus.clear) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('User details cleared!'),
                   ),
                 );
+              } else if (state.formStatus == FormStatus.save) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('User details saved!'),
+                  ),
+                );
               }
             },
+            buildWhen: (previous, current) =>
+                previous.avatarColor != current.avatarColor ||
+                previous.userAttributes != current.userAttributes ||
+                previous.rules != current.rules ||
+                previous.assignments != current.assignments ||
+                previous.formStatus != current.formStatus,
             builder: (context, state) {
+                print(state.userDetails);
               final TextEditingController firstNameController =
                   TextEditingController(text: state.userDetails.firstName);
               final TextEditingController lastNameController =
@@ -151,7 +168,7 @@ class ProfileView extends StatelessWidget {
                           statusController,
                           personNumberController,
                         ]),
-                        const _SaveButton(),
+                        _SaveButton(),
                       ],
                     ),
                   ),
@@ -195,23 +212,31 @@ class _ClearButton extends StatelessWidget {
   }
 }
 
+
 class _SaveButton extends StatelessWidget {
-  const _SaveButton();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      decoration: const BoxDecoration(
-        color: Color(0XFF436b8a),
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-      ),
-      child: const Text(
-        'Spara',
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-          color: Colors.white,
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          context.read<ProfileCubit>().saveUserDetails();
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          decoration: const BoxDecoration(
+            color: Color(0XFF436b8a),
+            borderRadius: BorderRadius.all(Radius.circular(6)),
+          ),
+          child: const Text(
+            'Spara',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );
@@ -231,25 +256,16 @@ class UserDetailsTextField extends StatefulWidget {
   final ValueSetter<String> onChanged;
 
   @override
-  // ignore: library_private_types_in_public_api
   _UserDetailsTextFieldState createState() => _UserDetailsTextFieldState();
 }
 
 class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
   @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(_onTextChanged);
-  }
 
   @override
   void dispose() {
-    widget.controller.removeListener(_onTextChanged);
+    widget.controller.dispose();
     super.dispose();
-  }
-
-  void _onTextChanged() {
-    widget.onChanged(widget.controller.text);
   }
 
   @override
@@ -267,9 +283,13 @@ class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
               ),
             ),
             const SizedBox(height: 6),
-            TextFormField(
+            TextField(
+
+            key:  Key('userForm_${widget.title}_textField'),
               controller: widget.controller,
-              onChanged: (val) => widget.onChanged,
+              onChanged: (val) {
+                widget.onChanged(val);
+              },
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.grey[200],

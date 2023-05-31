@@ -20,26 +20,33 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(state.copyWith(userDetails: () => mockUser));
   }
 
-  void avatarColorChanged(Color color) =>
-      emit(state.copyWith(avatarColor: () => color));
+  void avatarColorChanged(Color color) => emit(
+        state.copyWith(
+          formStatus: () => FormStatus.editing,
+          avatarColor: () => color,
+        ),
+      );
 
   void firstNameChanged(String name) {
+      print('bae');
     emit(
       state.copyWith(
+        formStatus: () => FormStatus.editing,
         userDetails: () => state.userDetails.copyWith(firstName: name),
       ),
     );
-    print(state.userDetails);
   }
 
   void lastNameChanged(String name) => emit(
         state.copyWith(
+          formStatus: () => FormStatus.editing,
           userDetails: () => state.userDetails.copyWith(lastName: name),
         ),
       );
 
   void personNumberChanged(String personNumber) => emit(
         state.copyWith(
+          formStatus: () => FormStatus.editing,
           userDetails: () =>
               state.userDetails.copyWith(personNumber: personNumber),
         ),
@@ -47,12 +54,14 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void phoneChanged(String phone) => emit(
         state.copyWith(
+          formStatus: () => FormStatus.editing,
           userDetails: () => state.userDetails.copyWith(phoneNumber: phone),
         ),
       );
 
   void descriptionChanged(String description) => emit(
         state.copyWith(
+          formStatus: () => FormStatus.editing,
           userDetails: () =>
               state.userDetails.copyWith(description: description),
         ),
@@ -60,22 +69,27 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   void statusChanged(String status) => emit(
         state.copyWith(
+          formStatus: () => FormStatus.editing,
           userDetails: () => state.userDetails.copyWith(status: status),
         ),
       );
 
   void clearAllUserDetails() {
-    print(state.userDetails);
-    if (!state.userDetails.isEmpty) {
-      emit(
-        state.copyWith(
-          formStatus: () => FormStatus.clear,
-          userDetails: () => const UserDetails(),
-        ),
-      );
-    }
+    emit(state.copyWith(
+      formStatus: () => FormStatus.clear,
+      userDetails: () => const UserDetails(),
+    ));
   }
 
-  void saveUserDetails() =>
-      emit(state.copyWith(formStatus: () => FormStatus.save));
+  void saveUserDetails() {
+    //...writing to db
+      print(state.userDetails);
+    emit(state.copyWith(formStatus: () => FormStatus.save));
+  }
+
+  void formChanged() {
+
+      print(state.userDetails);
+    emit(state.copyWith(formStatus: () => FormStatus.editing));
+  }
 }
