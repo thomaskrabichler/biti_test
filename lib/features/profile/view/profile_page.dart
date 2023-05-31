@@ -57,19 +57,32 @@ class ProfileView extends StatelessWidget {
                 previous.assignments != current.assignments ||
                 previous.formStatus != current.formStatus,
             builder: (context, state) {
-                print(state.userDetails);
+              print(state.userDetails);
+              //     final TextEditingController firstNameController =
+              //         TextEditingController(text: state.userDetails.firstName);
+              //     final TextEditingController lastNameController =
+              //         TextEditingController(text: state.userDetails.lastName);
+              //     final TextEditingController personNumberController =
+              //         TextEditingController(text: state.userDetails.personNumber);
+              //     final TextEditingController phoneController =
+              //         TextEditingController(text: state.userDetails.phoneNumber);
+              //     final TextEditingController descriptionController =
+              //         TextEditingController(text: state.userDetails.description);
+              //     final TextEditingController statusController =
+              //        TextEditingController(text: state.userDetails.status);
+
               final TextEditingController firstNameController =
-                  TextEditingController(text: state.userDetails.firstName);
+                  TextEditingController();
               final TextEditingController lastNameController =
-                  TextEditingController(text: state.userDetails.lastName);
+                  TextEditingController();
               final TextEditingController personNumberController =
-                  TextEditingController(text: state.userDetails.personNumber);
+                  TextEditingController();
               final TextEditingController phoneController =
-                  TextEditingController(text: state.userDetails.phoneNumber);
+                  TextEditingController();
               final TextEditingController descriptionController =
-                  TextEditingController(text: state.userDetails.description);
+                  TextEditingController();
               final TextEditingController statusController =
-                  TextEditingController(text: state.userDetails.status);
+                  TextEditingController();
               return ListView(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 children: [
@@ -104,6 +117,7 @@ class ProfileView extends StatelessWidget {
                   Row(
                     children: [
                       UserDetailsTextField(
+                        initText: state.userDetails.firstName,
                         controller: firstNameController,
                         title: 'Förnamn',
                         onChanged: (val) =>
@@ -111,6 +125,7 @@ class ProfileView extends StatelessWidget {
                       ),
                       const SizedBox(width: 22),
                       UserDetailsTextField(
+                        initText: state.userDetails.lastName,
                         controller: lastNameController,
                         title: 'Efternamn',
                         onChanged: (val) =>
@@ -122,6 +137,7 @@ class ProfileView extends StatelessWidget {
                   Row(
                     children: [
                       UserDetailsTextField(
+                        initText: state.userDetails.personNumber,
                         controller: personNumberController,
                         title: 'Personnummer',
                         onChanged: (val) => context
@@ -130,6 +146,7 @@ class ProfileView extends StatelessWidget {
                       ),
                       const SizedBox(width: 22),
                       UserDetailsTextField(
+                        initText: state.userDetails.phoneNumber,
                         controller: phoneController,
                         title: 'Telefonnummer',
                         onChanged: (val) =>
@@ -140,6 +157,7 @@ class ProfileView extends StatelessWidget {
                   Row(
                     children: [
                       UserDetailsTextField(
+                        initText: state.userDetails.description,
                         controller: descriptionController,
                         title: 'Beskriving',
                         onChanged: (val) => context
@@ -148,6 +166,7 @@ class ProfileView extends StatelessWidget {
                       ),
                       const SizedBox(width: 22),
                       UserDetailsTextField(
+                        initText: state.userDetails.status,
                         controller: statusController,
                         title: 'Status',
                         onChanged: (val) =>
@@ -212,9 +231,7 @@ class _ClearButton extends StatelessWidget {
   }
 }
 
-
 class _SaveButton extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
@@ -249,9 +266,11 @@ class UserDetailsTextField extends StatefulWidget {
     required this.title,
     required this.controller,
     required this.onChanged,
+    required this.initText,
   }) : super(key: key);
 
   final String title;
+  final String initText;
   final TextEditingController controller;
   final ValueSetter<String> onChanged;
 
@@ -261,11 +280,20 @@ class UserDetailsTextField extends StatefulWidget {
 
 class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
   @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onTextChanged);
+  }
 
   @override
   void dispose() {
-    widget.controller.dispose();
+    widget.controller.removeListener(_onTextChanged);
     super.dispose();
+  }
+
+  void _onTextChanged() {
+    print('yui');
+    widget.onChanged(widget.controller.text);
   }
 
   @override
@@ -284,9 +312,8 @@ class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
             ),
             const SizedBox(height: 6),
             TextField(
-
-            key:  Key('userForm_${widget.title}_textField'),
-              controller: widget.controller,
+              key: Key('userForm_${widget.title}_textField'),
+              controller: widget.controller..text = widget.initText,
               onChanged: (val) {
                 widget.onChanged(val);
               },
