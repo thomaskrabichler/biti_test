@@ -9,7 +9,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit() : super(const ProfileState());
 
   void initProfile() {
-    UserDetails mockUser = const UserDetails(
+    UserDetails user = const UserDetails(
       firstName: 'Kalle',
       lastName: 'Efternamn',
       personNumber: 'Förnamn',
@@ -17,7 +17,24 @@ class ProfileCubit extends Cubit<ProfileState> {
       description: 'Beskriving',
       status: 'Aktiv',
     );
-    emit(state.copyWith(userDetails: () => mockUser));
+
+    UserAttributes initialAttributes = const UserAttributes(
+      gender: 'Man',
+      language: const ['Svenska', 'Engelska'],
+      allergies: const ['Palsdjur'],
+    );
+
+    emit(state.copyWith(
+      userDetails: () => user,
+      selectedAttributes: () => initialAttributes,
+    ));
+  }
+
+  void updateGender(String gender) {
+    emit(state.copyWith(
+        selectedAttributes: () =>
+            state.selectedAttributes.copyWith(gender: gender)));
+    print(state.selectedAttributes.gender);
   }
 
   void avatarColorChanged(Color color) => emit(
@@ -86,8 +103,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void formChanged() {
-
-      print(state.userDetails);
+    print(state.userDetails);
     emit(state.copyWith(formStatus: () => FormStatus.editing));
   }
 }

@@ -14,22 +14,31 @@ enum FormStatus {
   clear,
 }
 
-
 @immutable
 class ProfileState extends Equatable {
   final Color avatarColor;
   final UserDetails userDetails;
-  final List<UserAttribute> userAttributes;
+  final UserAttributes selectedAttributes;
   final List<String> rules;
+  final List<String> languages;
+  final List<String> allergies;
   final List<Assignment> assignments;
   final FormStatus formStatus;
 
   const ProfileState({
     this.avatarColor = Colors.blueGrey,
     this.userDetails = const UserDetails(),
-    this.userAttributes = const [],
+    this.selectedAttributes = const UserAttributes(),
     this.rules = const [],
     this.assignments = const [],
+    this.languages = const [
+      'Svenska',
+      'Engelska',
+      'Italienska',
+      'Spanska',
+      'Arabiska',
+    ],
+    this.allergies = const ['Palsdjur'],
     this.formStatus = FormStatus.initial,
   });
 
@@ -37,17 +46,22 @@ class ProfileState extends Equatable {
     FormStatus Function()? formStatus,
     Color Function()? avatarColor,
     UserDetails Function()? userDetails,
-    List<UserAttribute> Function()? userAttributes,
+    UserAttributes Function()? selectedAttributes,
     List<String> Function()? rules,
+    List<String> Function()? languages,
+    List<String> Function()? allergies,
     List<Assignment> Function()? assignments,
   }) {
     return ProfileState(
       formStatus: formStatus != null ? formStatus() : this.formStatus,
       avatarColor: avatarColor != null ? avatarColor() : this.avatarColor,
       userDetails: userDetails != null ? userDetails() : this.userDetails,
-      userAttributes:
-          userAttributes != null ? userAttributes() : this.userAttributes,
+      selectedAttributes: selectedAttributes != null
+          ? selectedAttributes()
+          : this.selectedAttributes,
       rules: rules != null ? rules() : this.rules,
+      languages: languages != null ? languages() : this.languages,
+      allergies: allergies != null ? allergies() : this.allergies,
       assignments: assignments != null ? assignments() : this.assignments,
     );
   }
@@ -56,9 +70,11 @@ class ProfileState extends Equatable {
   List<Object?> get props => [
         avatarColor,
         userDetails,
-        userAttributes,
+        selectedAttributes,
         rules,
         assignments,
         formStatus,
+        languages,
+        allergies,
       ];
 }

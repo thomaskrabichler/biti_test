@@ -1,4 +1,5 @@
 import 'package:biti_test/features/calendar/calendar.dart';
+import 'package:biti_test/features/calendar/models/timeframe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,9 +15,9 @@ class CalendarWidget extends StatelessWidget {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding:  EdgeInsets.only(top: 25.0, right: 25),
-                child:  _TimeColumn(),
+              Padding(
+                padding: const EdgeInsets.only(top: 25.0, right: 25),
+                child: _TimeColumn(),
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -38,19 +39,14 @@ class CalendarWidget extends StatelessWidget {
 }
 
 class _TimeColumn extends StatelessWidget {
-  const _TimeColumn({
-    super.key,
-  });
-
   @override
   Widget build(BuildContext context) {
-      const double timeslotHeight = 30;
-      const double bottomPadding = 5;
+    const double timeslotHeight = 30;
+    const double bottomPadding = 5;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: List.generate(25, (index) {
-        final hour =
-            index == 24 ? '00' : index.toString().padLeft(2, '0');
+        final hour = index == 24 ? '00' : index.toString().padLeft(2, '0');
         return SizedBox(
           height: timeslotHeight + bottomPadding,
           child: Text('$hour:00'),
@@ -108,38 +104,137 @@ class _DayColumn extends StatelessWidget {
                     );
                   },
                 ),
-                ...state.columns[index].timeframes.map((timeframe) {
+                ...state.columns[index].timeframes.asMap().entries.map((entry) {
+                  final int timeframeIndex = entry.key;
+                  final Timeframe timeframe = entry.value;
+
                   final startTime = double.parse(timeframe.startTime);
                   final endTime = double.parse(timeframe.endTime);
-                  final position = double.parse(timeframe.startTime) *
-                      (timeslotHeight + bottomPadding);
-// RECALCULATE 7 - 8 SHOULD FILL OUT 8 ASWELL
+                  final position = startTime * (timeslotHeight + bottomPadding);
                   final height = (endTime - startTime) * timeslotHeight;
-                  return Positioned(
-                    top: position,
+
+                  return _ScheduleItem(
+                    calendarCubit: context.read<CalendarCubit>(),
+                    timeFrameIndex: timeframeIndex,
+                    columnIndex: index,
+                    timeframe: timeframe,
+                    position: position,
                     height: height,
-                    left: (timeslotWidth - scheduleWidth) / 2,
-                    width: scheduleWidth,
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.purpleAccent,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'BP',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
+                    timeslotWidth: timeslotWidth,
+                    scheduleWidth: scheduleWidth,
                   );
                 }).toList(),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ScheduleItem extends StatefulWidget {
+  _ScheduleItem({
+    required this.position,
+    required this.height,
+    required this.timeslotWidth,
+    required this.scheduleWidth,
+    required this.timeframe,
+    required this.columnIndex,
+    required this.timeFrameIndex,
+    required this.calendarCubit,
+  });
+
+  double position;
+  final double height;
+  final double timeslotWidth;
+  final double scheduleWidth;
+  final Timeframe timeframe;
+  final int columnIndex;
+  final int timeFrameIndex;
+  final CalendarCubit calendarCubit;
+
+  @override
+  State<_ScheduleItem> createState() => _ScheduleItemState();
+}
+
+class _ScheduleItemState extends State<_ScheduleItem> {
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController startController = TextEditingController();
+    final TextEditingController endController = TextEditingController();
+    return Positioned(
+      top: widget.position,
+      height: widget.height,
+      left: (widget.timeslotWidth - widget.scheduleWidth) / 2,
+      width: widget.scheduleWidth,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.grab,
+        child: Draggable(
+          onDragStarted: () {},
+          onDragUpdate: (details) {
+            widget.position += details.delta.dy;
+          },
+          feedback: Container(),
+          child: GestureDetector(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return BlocProvider.value(
+                      value: widget.calendarCubit,
+                      child: AlertDialog(
+                        title: const Text('Update Schedule'),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextField(
+                              controller: startController,
+                              decoration:
+                                  const InputDecoration(hintText: "Start Time"),
+                            ),
+                            TextField(
+                              controller: endController,
+                              decoration:
+                                  const InputDecoration(hintText: "End Time"),
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                widget.calendarCubit.updateSchedule(
+                                  widget.timeframe.copyWith(
+                                    startTime: startController.text,
+                                    endTime: endController.text,
+                                  ),
+                                  widget.columnIndex,
+                                  widget.timeFrameIndex,
+                                );
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Submit'))
+                        ],
+                      ),
+                    );
+                  });
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.purpleAccent,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(5),
+                ),
+              ),
+              child: const Center(
+                child: Text(
+                  'BP',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

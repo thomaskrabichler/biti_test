@@ -1,14 +1,27 @@
 import 'package:equatable/equatable.dart';
 
-class UserAttribute extends Equatable {
-  final String attributeName;
-  final List<String> attributeContent;
+class UserAttributes extends Equatable {
+  final String gender;
+  final List<String> language;
+  final List<String> allergies;
 
-  const UserAttribute({
-    required this.attributeName,
-    required this.attributeContent,
+  const UserAttributes({
+    this.gender = '',
+    this.language = const [],
+    this.allergies = const [],
   });
 
+  UserAttributes copyWith({
+    String? gender,
+    List<String>? language,
+    List<String>? allergies,
+  }) {
+    return UserAttributes(
+      gender: gender ?? this.gender,
+      language: language ?? this.language,
+      allergies: allergies ?? this.allergies,
+    );
+  }
   @override
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [gender, language, allergies];
 }

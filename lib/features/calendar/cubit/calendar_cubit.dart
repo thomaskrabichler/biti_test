@@ -3,6 +3,7 @@ import 'package:biti_test/features/calendar/models/timeframe.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'calendar_state.dart';
 
@@ -44,4 +45,28 @@ class CalendarCubit extends Cubit<CalendarState> {
       ),
     );
   }
+
+  void updateSchedule(
+      Timeframe timeframe, int columnIndex, int timeframeIndex) {
+    final List<DayColumn> updatedColumns = List.from(state.columns);
+    final DayColumn column = updatedColumns[columnIndex];
+
+    final Timeframe updatedTimeframe =
+        column.timeframes[timeframeIndex].copyWith(
+      startTime: timeframe.startTime,
+      endTime: timeframe.endTime,
+    );
+    final List<Timeframe> updatedTimeframes = List.from(column.timeframes);
+    updatedTimeframes[timeframeIndex] = updatedTimeframe;
+
+    final DayColumn updatedColumn = column.copyWith(
+      timeframes: updatedTimeframes,
+    );
+
+    updatedColumns[columnIndex] = updatedColumn;
+
+    emit(state.copyWith(columns: updatedColumns));
+  }
 }
+
+
