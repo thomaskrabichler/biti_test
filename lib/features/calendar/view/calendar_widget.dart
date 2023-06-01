@@ -17,7 +17,7 @@ class CalendarWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 25.0, right: 25),
+                padding: const EdgeInsets.only(top: 32.0, right: 25),
                 child: _TimeColumn(),
               ),
               Expanded(
@@ -64,7 +64,7 @@ class _DayColumn extends StatelessWidget {
     required this.index,
   }) : super(key: key);
   final CalendarState state;
-  final index;
+  final int index;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,11 @@ class _DayColumn extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DayTitle(title: column.day),
+          Text(
+            column.day,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
           SizedBox(
             width: timeslotWidth,
             child: Stack(
@@ -112,7 +116,9 @@ class _DayColumn extends StatelessWidget {
                   final startTime = double.parse(timeframe.startTime);
                   final endTime = double.parse(timeframe.endTime);
                   final position = startTime * (timeslotHeight + bottomPadding);
-                  final height = (endTime - startTime) * timeslotHeight;
+                  final height = ((endTime - startTime) *
+                          (timeslotHeight + bottomPadding)) +
+                      timeslotHeight;
 
                   return _ScheduleItem(
                     calendarCubit: context.read<CalendarCubit>(),
@@ -160,83 +166,124 @@ class _ScheduleItem extends StatefulWidget {
 }
 
 class _ScheduleItemState extends State<_ScheduleItem> {
+  late double currentPosition;
+  final double snapIncrement = 35.0;
+  late double endPosition;
+
+  late ValueNotifier<Rect> draggableArea;
+
+  @override
+  void initState() {
+    super.initState();
+
+    currentPosition = widget.position;
+  }
+
+  ValueNotifier<Rect> _getDraggableArea(int timeframeIndex) {
+    final Rect initialRect = Rect.fromLTWH(
+      (widget.timeslotWidth - widget.scheduleWidth) / 2,
+      widget.position,
+      widget.scheduleWidth,
+      widget.height,
+    );
+
+    final ValueNotifier<Rect> draggableArea = ValueNotifier(initialRect);
+
+    return draggableArea;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController startController = TextEditingController();
-    final TextEditingController endController = TextEditingController();
-    return Positioned(
-      top: widget.position,
-      height: widget.height,
-      left: (widget.timeslotWidth - widget.scheduleWidth) / 2,
-      width: widget.scheduleWidth,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.grab,
-        child: Draggable(
-          onDragStarted: () {},
-          onDragUpdate: (details) {
-            widget.position += details.delta.dy;
-          },
-          feedback: Container(),
-          child: GestureDetector(
-            onTap: () {
-              showDialog(
+    final ValueNotifier<Rect> draggableArea =
+        _getDraggableArea(widget.timeFrameIndex);
+
+    return ValueListenableBuilder<Rect>(
+      valueListenable: draggableArea,
+      builder: (context, value, _) {
+        return Positioned.fromRect(
+          rect: value,
+          child: MouseRegion(
+            cursor: SystemMouseCursors.grab,
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
                   context: context,
                   builder: (context) {
                     return BlocProvider.value(
                       value: widget.calendarCubit,
                       child: AlertDialog(
                         title: const Text('Update Schedule'),
-                        content: Column(
+                        content: const Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextField(
-                              controller: startController,
-                              decoration:
-                                  const InputDecoration(hintText: "Start Time"),
+                              // controller: startController,
+                              decoration: InputDecoration(
+                                  hintText: "Start (e.g. 0,1,2,..24)"),
                             ),
                             TextField(
-                              controller: endController,
-                              decoration:
-                                  const InputDecoration(hintText: "End Time"),
+                              //   controller: endController,
+                              decoration: InputDecoration(
+                                  hintText: "End (e.g. 0,1,2,..24)"),
                             ),
                           ],
                         ),
                         actions: [
                           TextButton(
-                              onPressed: () {
-                                widget.calendarCubit.updateSchedule(
-                                  widget.timeframe.copyWith(
-                                    startTime: startController.text,
-                                    endTime: endController.text,
-                                  ),
-                                  widget.columnIndex,
-                                  widget.timeFrameIndex,
-                                );
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Submit'))
+                            onPressed: () {
+                              widget.calendarCubit.updateSchedule(
+                                widget.timeframe.copyWith(
+                                    // startTime: startController.text,
+                                    //endTime: endController.text,
+                                    ),
+                                widget.columnIndex,
+                                widget.timeFrameIndex,
+                              );
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Submit'),
+                          ),
                         ],
                       ),
                     );
-                  });
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                color: ColorPalette.purple,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5),
+                  },
+                );
+              },
+              onPanEnd: (details) {
+                print(endPosition);
+                print(widget.height);
+              },
+              onPanUpdate: (details) {
+                currentPosition += details.delta.dy;
+                final snappedPosition =
+                    (currentPosition / snapIncrement).round() * snapIncrement;
+                endPosition = snappedPosition;
+                final newRect = Rect.fromLTWH(
+                  (widget.timeslotWidth - widget.scheduleWidth) / 2,
+                  snappedPosition,
+                  widget.scheduleWidth,
+                  widget.height,
+                );
+                draggableArea.value = newRect;
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: ColorPalette.purple,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(8),
+                  ),
                 ),
-              ),
-              child: const Center(
-                child: Text(
-                  'BP',
-                  style: TextStyle(color: Colors.white),
+                child: const Center(
+                  child: Text(
+                    'BP',
+                    style: TextStyle(color: Colors.white, fontSize: 10),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

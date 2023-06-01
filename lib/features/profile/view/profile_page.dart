@@ -81,13 +81,21 @@ class ProfileView extends StatelessWidget {
                           child: RulesSettings(constraints: constraints),
                         ),
                         SizedBox(height: verticalSpacing),
-                        const ProfileHeadline(title: 'Kalender'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ProfileHeadline(title: 'Kalender'),
+                            CalenderPageController()
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                        left: horizontalPadding - 65, right: horizontalPadding),
+                        left: horizontalPadding - 65,
+                        right: horizontalPadding,
+                        top: verticalSpacing / 2),
                     child: const CalendarWidget(),
                   )
                 ],
@@ -96,6 +104,56 @@ class ProfileView extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class CalenderPageController extends StatelessWidget {
+  const CalenderPageController({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          splashRadius: 16,
+          padding: EdgeInsets.zero,
+          onPressed: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('not implemented'),
+              ),
+            );
+          },
+          icon: const Icon(
+            Icons.chevron_left,
+            size: 16,
+          ),
+        ),
+        const Text(
+          'Vecka 9',
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+        ),
+        FittedBox(
+          child: IconButton(
+            splashRadius: 16,
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('not implemented'),
+                ),
+              );
+            },
+            icon: const Icon(
+              Icons.chevron_right,
+              size: 16,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -170,7 +228,6 @@ class _ColorPicker extends StatelessWidget {
                   ? Border.all(color: ColorPalette.avatarSelected, width: 3)
                   : null,
             ),
-         
           ),
         ),
       ),
