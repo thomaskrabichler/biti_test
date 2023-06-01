@@ -1,3 +1,4 @@
+import 'package:biti_test/common/shared/theme/color_palette.dart';
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';

@@ -1,3 +1,4 @@
+import 'package:biti_test/common/shared/theme/color_palette.dart';
 import 'package:biti_test/features/calendar/calendar.dart';
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,6 @@ class ProfileView extends StatelessWidget {
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          print(constraints.maxWidth);
           final screenWidth = constraints.maxWidth;
           final screenHeight = constraints.maxHeight;
           const paddingPercentage = 0.17;
@@ -75,8 +75,7 @@ class ProfileView extends StatelessWidget {
                         const UserDetailsForm(),
                         SizedBox(height: verticalSpacing),
                         _SettingsBox(
-                          child: AttributeSettings(constraints: constraints)
-                        ),
+                            child: AttributeSettings(constraints: constraints)),
                         SizedBox(height: verticalSpacing),
                         _SettingsBox(
                           child: RulesSettings(constraints: constraints),
@@ -110,8 +109,8 @@ class _SettingsBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
+      decoration: const BoxDecoration(
+        color: ColorPalette.lightGrey,
       ),
       child: child,
     );
@@ -129,9 +128,14 @@ class _AvatarSelector extends StatelessWidget {
         const ProfileHeadline(title: 'Avatar'),
         Row(
           children: [
-            _ColorPicker(color: Colors.blueGrey, state: state),
-            _ColorPicker(color: Colors.redAccent, state: state),
-            _ColorPicker(color: Colors.greenAccent, state: state),
+            _ColorPicker(color: ColorPalette.avatarGrey, state: state),
+            _ColorPicker(color: ColorPalette.avatarGreen, state: state),
+            _ColorPicker(color: ColorPalette.avatarRedAccent, state: state),
+            _ColorPicker(color: ColorPalette.avatarBeige, state: state),
+            _ColorPicker(color: ColorPalette.avatarBlue, state: state),
+            _ColorPicker(color: ColorPalette.avatarPurple, state: state),
+            _ColorPicker(color: ColorPalette.avatarCyan, state: state),
+            _ColorPicker(color: ColorPalette.avatarRed, state: state),
           ],
         ),
       ],
@@ -163,9 +167,10 @@ class _ColorPicker extends StatelessWidget {
               color: color,
               shape: BoxShape.circle,
               border: profileCubit.state.avatarColor == color
-                  ? Border.all(color: Colors.blueAccent, width: 3)
+                  ? Border.all(color: ColorPalette.avatarSelected, width: 3)
                   : null,
             ),
+         
           ),
         ),
       ),

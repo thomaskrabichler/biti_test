@@ -26,7 +26,7 @@ class ProfileState extends Equatable {
   final FormStatus formStatus;
 
   const ProfileState({
-    this.avatarColor = Colors.blueGrey,
+    this.avatarColor = ColorPalette.avatarGrey,
     this.userDetails = const UserDetails(),
     this.selectedAttributes = const UserAttributes(),
     this.rules = const ['Team A'],

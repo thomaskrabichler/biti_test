@@ -1,3 +1,4 @@
+import 'package:biti_test/common/shared/theme/color_palette.dart';
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -235,7 +236,10 @@ class CustomAddButton extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        const Text('Lägg till', style: TextStyle(fontSize: 12.5),)
+        const Text(
+          'Lägg till',
+          style: TextStyle(fontSize: 12.5),
+        )
       ],
     );
   }
@@ -265,8 +269,8 @@ class _GenderSelector extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: title == cubit.state.selectedAttributes.gender
-                  ? Colors.black87
-                  : Colors.grey[200],
+                  ? ColorPalette.black
+                  : ColorPalette.lightGrey,
               borderRadius: const BorderRadius.all(
                 Radius.circular(15),
               ),
@@ -277,7 +281,7 @@ class _GenderSelector extends StatelessWidget {
                 fontSize: 12,
                 color: title == cubit.state.selectedAttributes.gender
                     ? Colors.white
-                    : Colors.black87,
+                    : ColorPalette.black,
               ),
             ),
           ),
@@ -312,7 +316,7 @@ class _AllergieSelector extends StatelessWidget {
             decoration: BoxDecoration(
               color: state.selectedAttributes.allergies.contains(title)
                   ? Colors.black87
-                  : Colors.grey[200],
+                  : ColorPalette.lightGrey,
               borderRadius: const BorderRadius.all(
                 Radius.circular(15),
               ),
@@ -357,8 +361,8 @@ class _LanguageSelector extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: state.selectedAttributes.languages.contains(title)
-                  ? Colors.black87
-                  : Colors.grey[200],
+                  ? ColorPalette.black
+                  : ColorPalette.lightGrey,
               borderRadius: const BorderRadius.all(
                 Radius.circular(15),
               ),

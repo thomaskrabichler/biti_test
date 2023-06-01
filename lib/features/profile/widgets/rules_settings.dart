@@ -1,3 +1,4 @@
+import 'package:biti_test/common/shared/theme/color_palette.dart';
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,14 +46,14 @@ class RulesSettings extends StatelessWidget {
                           Icon(
                             Icons.link,
                             size: 18,
-                            color: Colors.green,
+                            color: ColorPalette.green,
                           ),
                           SizedBox(width: 10),
                           Text(
                             'Denna individ maste kopplas ihop med följande:',
                             style: TextStyle(
                               fontSize: 12,
-                              color: Colors.green,
+                              color: ColorPalette.green,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -77,7 +78,7 @@ class RulesSettings extends StatelessWidget {
                             ),
                           ),
                           CustomAddButton(
-                              color: Colors.green,
+                              color: ColorPalette.green,
                               onPressed: () {
                                 showDialog(
                                   context: context,
@@ -150,7 +151,7 @@ class _RuleTag extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.only(top: 8, left: 8, bottom: 8),
         decoration: const BoxDecoration(
-          color: Colors.green,
+          color: ColorPalette.lightGreen,
           borderRadius: BorderRadius.all(
             Radius.circular(15),
           ),
@@ -180,7 +181,7 @@ class _RuleTag extends StatelessWidget {
                       padding: EdgeInsets.all(1),
                       child: Icon(
                         Icons.close,
-                        color: Colors.green,
+                        color: ColorPalette.lightGreen,
                         size: 9,
                       ),
                     ),

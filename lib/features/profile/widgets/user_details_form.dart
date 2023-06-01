@@ -1,3 +1,4 @@
+import 'package:biti_test/common/shared/theme/color_palette.dart';
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -156,10 +157,10 @@ class _UserDetailsTextFieldState extends State<UserDetailsTextField> {
               onChanged: (val) {
                 widget.onChanged(val);
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding: const EdgeInsets.only(left: 8),
+                fillColor: ColorPalette.lightGrey,
+                contentPadding: EdgeInsets.only(left: 8),
                 border: InputBorder.none,
               ),
             ),
@@ -186,9 +187,9 @@ class _ClearButton extends StatelessWidget {
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: const BorderRadius.all(Radius.circular(6)),
+          decoration: const BoxDecoration(
+            color: ColorPalette.lightGrey,
+            borderRadius: BorderRadius.all(Radius.circular(6)),
           ),
           child: const Text(
             'Ta bort',

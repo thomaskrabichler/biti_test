@@ -1,3 +1,4 @@
+import 'package:biti_test/common/shared/theme/color_palette.dart';
 import 'package:biti_test/features/calendar/calendar.dart';
 import 'package:biti_test/features/calendar/models/timeframe.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _DayColumn extends StatelessWidget {
                           ),
                           child: Container(
                             height: timeslotHeight,
-                            color: Colors.grey[200],
+                            color: ColorPalette.lightGrey,
                           ),
                         ),
                       ),
@@ -221,7 +222,7 @@ class _ScheduleItemState extends State<_ScheduleItem> {
             },
             child: Container(
               decoration: const BoxDecoration(
-                color: Colors.purpleAccent,
+                color: ColorPalette.purple,
                 borderRadius: BorderRadius.all(
                   Radius.circular(5),
                 ),
