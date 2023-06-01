@@ -1,5 +1,3 @@
-import 'dart:js_util';
-
 import 'package:biti_test/features/calendar/calendar.dart';
 import 'package:biti_test/features/profile/profile.dart';
 import 'package:flutter/material.dart';
@@ -76,12 +74,12 @@ class ProfileView extends StatelessWidget {
                         const ProfileHeadline(title: 'Uppgifter'),
                         const UserDetailsForm(),
                         SizedBox(height: verticalSpacing),
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                          ),
-                          child: AttributeSettings(constraints: constraints),
+                        _SettingsBox(
+                          child: AttributeSettings(constraints: constraints)
+                        ),
+                        SizedBox(height: verticalSpacing),
+                        _SettingsBox(
+                          child: RulesSettings(constraints: constraints),
                         ),
                         SizedBox(height: verticalSpacing),
                         const ProfileHeadline(title: 'Kalender'),
@@ -103,157 +101,19 @@ class ProfileView extends StatelessWidget {
   }
 }
 
-class AttributeSettings extends StatelessWidget {
-  const AttributeSettings({
-    super.key,
-    required this.constraints,
-  });
+class _SettingsBox extends StatelessWidget {
+  const _SettingsBox({super.key, required this.child});
 
-  final BoxConstraints constraints;
-
-  final double horizontalPadding = 16;
-  @override
-  Widget build(BuildContext context) {
-    final state = context.read<ProfileCubit>().state;
-    final verticalSpacing = constraints.maxHeight * 0.015;
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const ProfileHeadline(
-            title: 'Attribut',
-          ),
-          Container(
-            width: double.infinity,
-            color: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Row(
-                    children: [
-                      Icon(Icons.light_sharp),
-                      Text(
-                        'Attribut',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 13),
-                      ),
-                    ],
-                  ),
-                  AttributeType(
-                    title: 'Kön',
-                    constraints: constraints,
-                  ),
-                   Row(
-                    children: [
-                      _GenderSelector(
-                          state: state,
-                        title: 'Man',
-                      ),
-                      _GenderSelector(
-                          state: state,
-                        title: 'Kvinna',
-                      ),
-                      _GenderSelector(
-                          state: state,
-                        title: 'Annat',
-                      ),
-                    ],
-                  ),
-                  AttributeType(
-                    title: 'Sprak',
-                    constraints: constraints,
-                  ),
-                  AttributeType(
-                    title: 'Allergier',
-                    constraints: constraints,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GenderSelector extends StatelessWidget {
-  const _GenderSelector({
-    super.key,
-    required this.title, required this.state,
-  });
-
-  final String title;
-  final ProfileState state;
-  @override
-  Widget build(BuildContext context) {
-    final cubit = context.read<ProfileCubit>();
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () {
-            print(title);
-          cubit.updateGender(title);
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 8.0),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: equal(title, cubit.state.selectedAttributes.gender)
-                  ? Colors.black87
-                  : Colors.grey[200],
-              borderRadius: const BorderRadius.all(
-                Radius.circular(15),
-              ),
-            ),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: 12,
-                color: equal(title, cubit.state.selectedAttributes.gender)
-                    ? Colors.white
-                    : Colors.black87,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AttributeType extends StatelessWidget {
-  const AttributeType({
-    super.key,
-    required this.constraints,
-    required this.title,
-  });
-
-  final double horizontalPadding = 16;
-  final BoxConstraints constraints;
-  final String title;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    final verticalSpacing = constraints.maxHeight * 0.015;
-    const headlineStyle = TextStyle(fontWeight: FontWeight.w700, fontSize: 12);
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: verticalSpacing),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(title, style: headlineStyle),
-          SizedBox(width: horizontalPadding * 2),
-          const Expanded(
-            child: Divider(),
-          ),
-        ],
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
       ),
+      child: child,
     );
   }
 }

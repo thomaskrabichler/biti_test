@@ -29,7 +29,7 @@ class ProfileState extends Equatable {
     this.avatarColor = Colors.blueGrey,
     this.userDetails = const UserDetails(),
     this.selectedAttributes = const UserAttributes(),
-    this.rules = const [],
+    this.rules = const ['Team A'],
     this.assignments = const [],
     this.languages = const [
       'Svenska',

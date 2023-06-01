@@ -20,8 +20,8 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     UserAttributes initialAttributes = const UserAttributes(
       gender: 'Man',
-      language: const ['Svenska', 'Engelska'],
-      allergies: const ['Palsdjur'],
+      languages: ['Svenska', 'Engelska'],
+      allergies: ['Palsdjur'],
     );
 
     emit(state.copyWith(
@@ -31,10 +31,82 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void updateGender(String gender) {
-    emit(state.copyWith(
+    emit(
+      state.copyWith(
         selectedAttributes: () =>
-            state.selectedAttributes.copyWith(gender: gender)));
-    print(state.selectedAttributes.gender);
+            state.selectedAttributes.copyWith(gender: gender),
+      ),
+    );
+  }
+
+  void selectLanguage(String language) {
+    final selectedLanguages =
+        List<String>.from(state.selectedAttributes.languages);
+    if (selectedLanguages.contains(language)) {
+      selectedLanguages.remove(language);
+    } else {
+      selectedLanguages.add(language);
+    }
+
+    emit(
+      state.copyWith(
+        selectedAttributes: () =>
+            state.selectedAttributes.copyWith(languages: selectedLanguages),
+      ),
+    );
+  }
+
+  void selectAllergie(String allergie) {
+    final selectedAllergies =
+        List<String>.from(state.selectedAttributes.allergies);
+    if (selectedAllergies.contains(allergie)) {
+      selectedAllergies.remove(allergie);
+    } else {
+      selectedAllergies.add(allergie);
+    }
+
+    emit(
+      state.copyWith(
+        selectedAttributes: () =>
+            state.selectedAttributes.copyWith(allergies: selectedAllergies),
+      ),
+    );
+  }
+
+  void addLanguage(String newLanguage) {
+    final updatedLanguages = List<String>.from(state.languages);
+    if (newLanguage.isNotEmpty) {
+      updatedLanguages.add(newLanguage);
+
+      emit(state.copyWith(languages: () => updatedLanguages));
+    }
+  }
+
+  void addAllergie(String newAllergie) {
+    final updatedAllergies = List<String>.from(state.allergies);
+    if (newAllergie.isNotEmpty) {
+      updatedAllergies.add(newAllergie);
+
+      emit(state.copyWith(allergies: () => updatedAllergies));
+    }
+  }
+
+  void addRule(String newRule) {
+    final updatedRules = List<String>.from(state.rules);
+    if (newRule.isNotEmpty) {
+      updatedRules.add(newRule);
+
+      emit(state.copyWith(rules: () => updatedRules));
+    }
+  }
+
+  void deleteRule(String rule) {
+    final updatedRules = List<String>.from(state.rules);
+    if (updatedRules.contains(rule)) {
+      updatedRules.remove(rule);
+
+      emit(state.copyWith(rules: () => updatedRules));
+    }
   }
 
   void avatarColorChanged(Color color) => emit(
@@ -103,7 +175,6 @@ class ProfileCubit extends Cubit<ProfileState> {
   }
 
   void formChanged() {
-    print(state.userDetails);
     emit(state.copyWith(formStatus: () => FormStatus.editing));
   }
 }
