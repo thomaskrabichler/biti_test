@@ -78,17 +78,20 @@ class _DayColumn extends StatelessWidget {
     const double scheduleWidthPercentage = 0.8;
     const double bottomPadding = 5;
 
-    final timeslotWidth = availableWidth / 7; // 6% of the screen width
+    final timeslotWidth = availableWidth / 7;
     final scheduleWidth = timeslotWidth * scheduleWidthPercentage;
-    print(availableWidth);
     return Padding(
       padding: EdgeInsets.only(right: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            column.day,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+          FittedBox(
+            child: Text(
+              column.day,
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const SizedBox(height: 8),
           SizedBox(
