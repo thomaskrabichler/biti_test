@@ -151,8 +151,8 @@ class _ScheduleItem extends StatefulWidget {
     required this.timeFrameIndex,
     required this.calendarCubit,
   });
-
   double position;
+
   final double height;
   final double timeslotWidth;
   final double scheduleWidth;
@@ -167,15 +167,18 @@ class _ScheduleItem extends StatefulWidget {
 
 class _ScheduleItemState extends State<_ScheduleItem> {
   late double currentPosition;
-  final double snapIncrement = 35.0;
+  final double snapIncrement = 35.0; //timeframeHeight (1h)
   late double endPosition;
-
   late ValueNotifier<Rect> draggableArea;
+  late TextEditingController startTimeController;
+  late TextEditingController endTimeController;
 
   @override
   void initState() {
     super.initState();
 
+    startTimeController = TextEditingController();
+    endTimeController = TextEditingController();
     currentPosition = widget.position;
   }
 
@@ -213,17 +216,17 @@ class _ScheduleItemState extends State<_ScheduleItem> {
                       value: widget.calendarCubit,
                       child: AlertDialog(
                         title: const Text('Update Schedule'),
-                        content: const Column(
+                        content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextField(
-                              // controller: startController,
-                              decoration: InputDecoration(
+                              controller: startTimeController,
+                              decoration: const InputDecoration(
                                   hintText: "Start (e.g. 0,1,2,..24)"),
                             ),
                             TextField(
-                              //   controller: endController,
-                              decoration: InputDecoration(
+                              controller: endTimeController,
+                              decoration: const InputDecoration(
                                   hintText: "End (e.g. 0,1,2,..24)"),
                             ),
                           ],
@@ -233,13 +236,19 @@ class _ScheduleItemState extends State<_ScheduleItem> {
                             onPressed: () {
                               widget.calendarCubit.updateSchedule(
                                 widget.timeframe.copyWith(
-                                    // startTime: startController.text,
-                                    //endTime: endController.text,
-                                    ),
+                                  startTime: startTimeController.text,
+                                  endTime: endTimeController.text,
+                                ),
                                 widget.columnIndex,
                                 widget.timeFrameIndex,
                               );
                               Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    duration: const Duration(seconds: 1),
+                                  content: Text('Schedule updated'),
+                                ),
+                              );
                             },
                             child: const Text('Submit'),
                           ),
@@ -250,8 +259,13 @@ class _ScheduleItemState extends State<_ScheduleItem> {
                 );
               },
               onPanEnd: (details) {
-                print(endPosition);
-                print(widget.height);
+                ScaffoldMessenger.of(context).showSnackBar(
+
+                  const SnackBar(
+                      duration: Duration(seconds: 1),
+                    content: Text('Schedule updated'),
+                  ),
+                );
               },
               onPanUpdate: (details) {
                 currentPosition += details.delta.dy;

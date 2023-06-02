@@ -36,7 +36,7 @@ class AttributeSettings extends StatelessWidget {
                   children: [
                     const Row(
                       children: [
-                        Icon(Icons.light_sharp),
+                        Icon(Icons.bolt, size: 16,),
                         Text(
                           'Attribut',
                           style: TextStyle(
@@ -397,7 +397,7 @@ class _AttributeType extends StatelessWidget {
   Widget build(BuildContext context) {
     const headlineStyle = TextStyle(fontWeight: FontWeight.w700, fontSize: 12);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 22),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [

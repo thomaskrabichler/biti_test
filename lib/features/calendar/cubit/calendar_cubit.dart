@@ -21,14 +21,40 @@ class CalendarCubit extends Cubit<CalendarState> {
       const Timeframe(startTime: '18', endTime: '23'),
       const Timeframe(startTime: '5', endTime: '5.5'),
     ];
-    DayColumn monday = DayColumn(day: 'Mandag', timeframes: mockTimeframes);
-    DayColumn tuesday = DayColumn(day: 'Tisdag', timeframes: mockTimeframes);
-    DayColumn wednesday = DayColumn(day: 'Onsdag', timeframes: mockTimeframes);
-    DayColumn thursday = DayColumn(day: 'Törsdag', timeframes: mockTimeframes);
-    DayColumn friday = DayColumn(day: 'Fredag', timeframes: mockTimeframes);
-    DayColumn saturday = DayColumn(day: 'Lördag', timeframes: mockTimeframes);
-    DayColumn sunday =
-        DayColumn(day: 'Söndag', timeframes: mockTimeframesSunday);
+
+    DateTime currentDate = DateTime.now();
+
+DayColumn monday = DayColumn(
+  day:'Mandag ${_getDayName(currentDate)}',
+  timeframes: mockTimeframes,
+);
+
+DayColumn tuesday = DayColumn(
+  day: 'Tisdag ${_getDayName(currentDate.add(Duration(days: 1)))}',
+  timeframes: mockTimeframes,
+);
+
+DayColumn wednesday = DayColumn(
+  day: 'Onsdag ${_getDayName(currentDate.add(const Duration(days: 2)))}',
+  timeframes: mockTimeframes,
+);
+DayColumn thursday = DayColumn(
+  day: 'Törsdag ${_getDayName(currentDate.add(const Duration(days: 3)))}',
+  timeframes: mockTimeframes,
+);
+DayColumn friday = DayColumn(
+  day: 'Fredag ${_getDayName(currentDate.add(const Duration(days: 4)))}',
+  timeframes: mockTimeframes,
+);
+DayColumn saturday = DayColumn(
+  day: 'Lördag ${_getDayName(currentDate.add(const Duration(days: 5)))}',
+  timeframes: mockTimeframes,
+);
+DayColumn sunday = DayColumn(
+  day: 'Söndag ${_getDayName(currentDate.add(const Duration(days: 6)))}',
+  timeframes: mockTimeframesSunday,
+);
+
 
     emit(
       state.copyWith(
@@ -44,6 +70,9 @@ class CalendarCubit extends Cubit<CalendarState> {
       ),
     );
   }
+String _getDayName(DateTime date) {
+  return '${date.day}/${date.month}';
+}
 
   void updateSchedule(
     Timeframe timeframe,
@@ -53,7 +82,6 @@ class CalendarCubit extends Cubit<CalendarState> {
     final startTime = timeframe.startTime;
     final endTime = timeframe.endTime;
     if (startTime.isEmpty || endTime.isEmpty) return;
-
 
     final List<DayColumn> updatedColumns = List.from(state.columns);
     final DayColumn column = updatedColumns[columnIndex];
@@ -72,6 +100,10 @@ class CalendarCubit extends Cubit<CalendarState> {
 
     updatedColumns[columnIndex] = updatedColumn;
 
-    emit(state.copyWith(columns: updatedColumns));
+    emit(
+      state.copyWith(
+        columns: updatedColumns,
+      ),
+    );
   }
 }

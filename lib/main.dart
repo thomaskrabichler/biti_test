@@ -11,7 +11,10 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(fontFamily: 'RedHatDisplay'),
+      theme: ThemeData(fontFamily: 'RedHatDisplay',
+
+
+          ),
       home: const HomePage(),
     );
   }

@@ -46,48 +46,54 @@ class _HomeView extends StatelessWidget {
       body: Row(
         children: [
           SafeArea(
-            child: NavigationRail(
-              backgroundColor: const Color(0XFFf5f3f2),
-              key: ValueKey(selectedTab),
-              extended: true,
-              useIndicator: true,
-              indicatorColor: Colors.grey.withOpacity(.2),
-              labelType: NavigationRailLabelType.none,
-
-              selectedIconTheme: const IconThemeData(
-                color: Colors.black87,
-              ), // Set the icon color for selected item
-              selectedLabelTextStyle: const TextStyle(
-                color: Colors.black87,
-              ), // Set the label text color for selected item
-              selectedIndex: selectedTab,
-              onDestinationSelected: (val) {
-                context.read<HomeCubit>().setTab(val);
-              },
-              destinations: const [
-                NavigationRailDestination(
-                  indicatorColor: Colors.red,
-                  icon: Icon(Icons.mp),
-                  label: Text('Schema'),
+            child: Stack(children: [
+              NavigationRail(
+                  groupAlignment: -0.7,
+                backgroundColor: const Color(0XFFf5f3f2),
+                key: ValueKey(selectedTab),
+                extended: true,
+                useIndicator: true,
+                indicatorColor: Colors.grey.withOpacity(.2),
+                labelType: NavigationRailLabelType.none,
+                selectedIconTheme: const IconThemeData(
+                  color: Colors.black87,
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.schedule),
-                  label: Text('Uppföljning'),
+                selectedLabelTextStyle: const TextStyle(
+                  color: Colors.black87,
                 ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.light_rounded),
-                  label: Text(
-                    'Resurser',
+                selectedIndex: selectedTab,
+                onDestinationSelected: (val) {
+                  context.read<HomeCubit>().setTab(val);
+                },
+                destinations: const [
+                  NavigationRailDestination(
+                    indicatorColor: Colors.red,
+                    icon: Icon(Icons.event_note),
+                    label: Text('Schema'),
                   ),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.settings),
-                  label: Text(
-                    'Inställningar',
+                  NavigationRailDestination(
+                    icon: Icon(Icons.description),
+                    label: Text('Uppföljning'),
                   ),
-                ),
-              ],
-            ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.bolt),
+                    label: Text(
+                      'Resurser',
+                    ),
+                  ),
+                  NavigationRailDestination(
+                    icon: Icon(Icons.settings),
+                    label: Text(
+                      'Inställningar',
+                    ),
+                  ),
+                ],
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left:73.0, top: 40),
+                child: Text('Lingon',style: TextStyle(fontSize: 22),),
+              )
+            ]),
           ),
           Expanded(
             child: Container(

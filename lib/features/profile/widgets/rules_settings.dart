@@ -60,7 +60,7 @@ class RulesSettings extends StatelessWidget {
                         ],
                       ),
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: EdgeInsets.symmetric(vertical: 12),
                         child: Divider(),
                       ),
                       Row(
