@@ -31,6 +31,8 @@ class ProfileView extends StatelessWidget {
           const paddingPercentage = 0.17;
           final horizontalPadding = screenWidth * paddingPercentage;
           final verticalSpacing = screenHeight * 0.06;
+
+          final availableWidth = screenWidth - horizontalPadding * 2;
           return BlocConsumer<ProfileCubit, ProfileState>(
             listenWhen: (previous, current) =>
                 previous.formStatus != current.formStatus,
@@ -81,7 +83,7 @@ class ProfileView extends StatelessWidget {
                           child: RulesSettings(constraints: constraints),
                         ),
                         SizedBox(height: verticalSpacing),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ProfileHeadline(title: 'Kalender'),
@@ -96,7 +98,7 @@ class ProfileView extends StatelessWidget {
                         left: horizontalPadding - 65,
                         right: horizontalPadding,
                         top: verticalSpacing / 2),
-                    child: const CalendarWidget(),
+                    child: CalendarWidget(availableWidth: availableWidth - 45),
                   )
                 ],
               );
