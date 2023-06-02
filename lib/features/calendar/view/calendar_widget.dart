@@ -22,9 +22,7 @@ class CalendarWidget extends StatelessWidget {
                 child: _TimeColumn(),
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceEvenly, // Adjust the spacing based on your preference
-
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(
                   7,
                   // state.columns.length,
@@ -75,83 +73,79 @@ class _DayColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     final column = state.columns[index];
     const double timeslotHeight = 30;
-    const double scheduleWidthPercentage = 0.8;
     const double bottomPadding = 5;
 
     final timeslotWidth = availableWidth / 7;
-    final scheduleWidth = timeslotWidth * scheduleWidthPercentage;
+    final scheduleWidth = timeslotWidth * 0.8;
     return Padding(
-      padding: EdgeInsets.only(right: 5),
+      padding: const EdgeInsets.only(right: 5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FittedBox(
             child: Text(
               column.day,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(height: 8),
           SizedBox(
-            // width: timeslotWidth,
-            child: SizedBox(
-              width: timeslotWidth,
-              child: Stack(
-                children: [
-                  SizedBox(
-                    width: timeslotWidth,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: 25,
-                      itemBuilder: (context, index) {
-                        return MouseRegion(
-                          cursor: SystemMouseCursors.click,
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: bottomPadding,
-                              ),
-                              child: Container(
-                                height: timeslotHeight,
-                                color: ColorPalette.lightGrey,
-                              ),
+            width: timeslotWidth,
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: timeslotWidth,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 25,
+                    itemBuilder: (context, index) {
+                      return MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () {},
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: bottomPadding,
+                            ),
+                            child: Container(
+                              height: timeslotHeight,
+                              color: ColorPalette.lightGrey,
                             ),
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
-                  ...state.columns[index].timeframes
-                      .asMap()
-                      .entries
-                      .map((entry) {
-                    final int timeframeIndex = entry.key;
-                    final Timeframe timeframe = entry.value;
+                ),
+                ...state.columns[index].timeframes
+                    .asMap()
+                    .entries
+                    .map((entry) {
+                  final int timeframeIndex = entry.key;
+                  final Timeframe timeframe = entry.value;
 
-                    final startTime = double.parse(timeframe.startTime);
-                    final endTime = double.parse(timeframe.endTime);
-                    final position =
-                        startTime * (timeslotHeight + bottomPadding);
-                    final height = ((endTime - startTime) *
-                            (timeslotHeight + bottomPadding)) +
-                        timeslotHeight;
+                  final startTime = double.parse(timeframe.startTime);
+                  final endTime = double.parse(timeframe.endTime);
+                  final position =
+                      startTime * (timeslotHeight + bottomPadding);
+                  final height = ((endTime - startTime) *
+                          (timeslotHeight + bottomPadding)) +
+                      timeslotHeight;
 
-                    return _ScheduleItem(
-                      calendarCubit: context.read<CalendarCubit>(),
-                      timeFrameIndex: timeframeIndex,
-                      columnIndex: index,
-                      timeframe: timeframe,
-                      position: position,
-                      height: height,
-                      timeslotWidth: timeslotWidth,
-                      scheduleWidth: scheduleWidth,
-                    );
-                  }).toList(),
-                ],
-              ),
+                  return _ScheduleItem(
+                    calendarCubit: context.read<CalendarCubit>(),
+                    timeFrameIndex: timeframeIndex,
+                    columnIndex: index,
+                    timeframe: timeframe,
+                    position: position,
+                    height: height,
+                    timeslotWidth: timeslotWidth,
+                    scheduleWidth: scheduleWidth,
+                  );
+                }).toList(),
+              ],
             ),
           ),
         ],
@@ -265,7 +259,7 @@ class _ScheduleItemState extends State<_ScheduleItem> {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  duration: const Duration(seconds: 1),
+                                  duration: Duration(seconds: 1),
                                   content: Text('Schedule updated'),
                                 ),
                               );
@@ -288,9 +282,12 @@ class _ScheduleItemState extends State<_ScheduleItem> {
               },
               onPanUpdate: (details) {
                 currentPosition += details.delta.dy;
+
                 final snappedPosition =
                     (currentPosition / snapIncrement).round() * snapIncrement;
+
                 endPosition = snappedPosition;
+
                 final newRect = Rect.fromLTWH(
                   (widget.timeslotWidth - widget.scheduleWidth) / 2,
                   snappedPosition,

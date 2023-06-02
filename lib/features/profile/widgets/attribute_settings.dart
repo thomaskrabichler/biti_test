@@ -87,7 +87,6 @@ class AttributeSettings extends StatelessWidget {
                                 builder: (context) {
                                   return _AddLanguageDialog(cubit: cubit);
                                 });
-                            //context.read<ProfileCubit>().addLanguage(newLanguage)
                           },
                         ),
                       ],

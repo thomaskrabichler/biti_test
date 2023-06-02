@@ -28,8 +28,7 @@ class ProfileView extends StatelessWidget {
         builder: (context, constraints) {
           final screenWidth = constraints.maxWidth;
           final screenHeight = constraints.maxHeight;
-          const paddingPercentage = 0.17;
-          final horizontalPadding = screenWidth * paddingPercentage;
+          final horizontalPadding = screenWidth * 0.17;
           final verticalSpacing = screenHeight * 0.06;
 
           final availableWidth = screenWidth - horizontalPadding * 2;

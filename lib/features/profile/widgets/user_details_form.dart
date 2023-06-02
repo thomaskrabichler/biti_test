@@ -37,7 +37,6 @@ class UserDetailsForm extends StatelessWidget {
               title: 'Efternamn',
               onChanged: (val) =>
                   context.read<ProfileCubit>().lastNameChanged(val),
-              //   ),
             ),
           ],
         ),
@@ -183,7 +182,7 @@ class _ClearButton extends StatelessWidget {
         onTap: () {
           controllers.forEach((c) => c.clear());
 
-          context.read<ProfileCubit>().clearAllUserDetails();
+          //   context.read<ProfileCubit>().clearAllUserDetails();
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
