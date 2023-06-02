@@ -97,6 +97,7 @@ class ProfileView extends StatelessWidget {
                     padding: EdgeInsets.only(
                         left: horizontalPadding - 65,
                         right: horizontalPadding,
+                        bottom: verticalSpacing,
                         top: verticalSpacing / 2),
                     child: CalendarWidget(availableWidth: availableWidth - 45),
                   )

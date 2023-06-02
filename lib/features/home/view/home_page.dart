@@ -48,7 +48,7 @@ class _HomeView extends StatelessWidget {
           SafeArea(
             child: Stack(children: [
               NavigationRail(
-                  groupAlignment: -0.7,
+                groupAlignment: -0.7,
                 backgroundColor: const Color(0XFFf5f3f2),
                 key: ValueKey(selectedTab),
                 extended: true,
@@ -89,9 +89,15 @@ class _HomeView extends StatelessWidget {
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.only(left:73.0, top: 40),
-                child: Text('Lingon',style: TextStyle(fontSize: 22),),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: 73.0,
+                  top: MediaQuery.of(context).size.height * 0.04,
+                ),
+                child: const Text(
+                  'Lingon',
+                  style: TextStyle(fontSize: 22),
+                ),
               )
             ]),
           ),
